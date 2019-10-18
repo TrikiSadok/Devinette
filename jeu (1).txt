@@ -1,0 +1,812 @@
+package application;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.PreparedStatement;
+import com.mysql.jdbc.ResultSetMetaData;
+import com.mysql.jdbc.Statement;
+import com.mysql.jdbc.StatementImpl;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
+
+
+
+public class MaFrame extends JFrame{
+	
+
+	
+	private JMenu  partie , couleurs ;
+	private JMenuBar barreMenus;
+	private JMenuItem nouvelle , recherche , quitter ,bleu , rose , mauve;
+	private JTabbedPane onglets ;
+	private JPanel onglet1,onglet2,onglet3 ;
+	private  JPanel pNord ,pCentre ,pEst ,pNord2, pCentre2 ,p; 
+	private static JTextField t1;
+	private JTextField t2;
+	private JTextField t3;
+	private JTextField texte1;
+	private JTextField texte2;
+	private JTextField texte3;
+	private JTextField txt6;
+	private JFormattedTextField t4,date ;
+	private JButton b1,b2,b3,b4,prec,suiv,bu;
+	private JComboBox<String> c,c1;
+	private JLabel inscrit, pseudo, prenom, nom,sexe ,daten,txt1,txt2,txt3,txt4,txt5,txt7;
+	private GridBagConstraints g,n ,e,l;
+	private JLabel image;
+	String stm="SELECT * FROM joueur";
+	java.sql.Statement statement=null;
+	ResultSet resultat=null;
+	java.sql.Connection con=MyConnection.getConnection();
+	 public int nbessaijoueur = 7;
+     public int nbrjoueur = 0;
+     Random rand = new Random(); 
+     int nbrordi = rand.nextInt(31) ;
+
+	
+	//constructeur 
+	public  MaFrame() {
+		
+		//ajuster fenetre
+		setTitle("Jeu de Devinette");
+		setSize(800,800);
+		setLocation(100,100);
+		barreMenus =new JMenuBar();
+		setJMenuBar(barreMenus);
+		
+		//Menu partie 
+		partie = new JMenu ("Partie");
+		barreMenus.add(partie);
+		nouvelle = new JMenuItem("Nouvelle partie ...");
+		partie.add(nouvelle);
+		
+		
+		recherche = new JMenuItem("Recherche");
+		partie.add(recherche);
+		partie.addSeparator();
+		quitter = new JMenuItem("Quitter");
+		partie.add(quitter);
+		
+		 nouvelle.addActionListener(new ActionPartie());
+		
+		
+		 quitter.addActionListener(new ActionListener() {
+			 public void actionPerformed(ActionEvent e)
+			 {
+			                 int i = 0;
+			  i=JOptionPane.showConfirmDialog(null, "Voulez vous vraiment quitter l'application ?", "Quitter", i );
+			  switch(i)
+			  {
+			  	case 0 :
+			    System.exit(0);
+			  	case 1 :
+			  }
+			 }
+			});
+		 recherche.addActionListener(new ActionRecherche());
+
+		
+		//Menu couleurs
+		couleurs = new JMenu ("Couleurs");
+		barreMenus.add(couleurs);
+		bleu = new JMenuItem("Bleu");
+		couleurs.add(bleu);
+		bleu.addActionListener(new ActionCouleurs());
+		rose = new JMenuItem("Rose");
+		couleurs.add(rose);
+		rose.addActionListener(new ActionCouleurs());
+		mauve = new JMenuItem("Mauve");
+		couleurs.add(mauve);
+		mauve.addActionListener(new ActionCouleurs());
+		
+		
+		//Création des onglets
+	    onglets = new JTabbedPane();
+	    onglet1 = new JPanel();
+	    onglet2 = new JPanel();
+	    onglet3 = new JPanel();
+	    
+
+	    
+
+
+
+	        //On ajoute l'onglet au menu d'onglets
+	        onglets.add("Joueurs et mise à jours",onglet1); 
+	        onglets.add("Classement",onglet2);
+	        onglets.add("Jouer ",onglet3);
+		add(onglets);
+		
+		
+		 
+		 
+		pNord= new JPanel() ;
+		pNord.setBackground(Color.blue);
+		 BorderLayout a = new BorderLayout();
+		  
+		  onglet1.setLayout(a);
+				
+			
+		    onglet1.add(pNord,BorderLayout.NORTH);
+		pCentre= new JPanel() ;
+				
+			
+		    onglet1.add(pCentre,BorderLayout.CENTER);
+		
+		pEst=  new JPanel() ;
+		pEst.setBackground(Color.white);
+		
+				
+			
+		    onglet1.add(pEst,BorderLayout.EAST);
+		
+		onglet1.add(pNord,"North");
+		onglet1.add(pCentre,"Center");
+		onglet1.add(pEst,"East");
+		
+	
+		t1= new JTextField (15);pNord.add(t1);
+		
+		t2= new JTextField (15);pNord.add(t2);
+		
+		t3= new JTextField (15);pNord.add(t3);
+		
+		t4= new JFormattedTextField (new SimpleDateFormat("dd-MM-yy")) ; 
+		t4.setPreferredSize(new Dimension (120,20));
+		pNord.add(t4);
+		
+		c=new JComboBox<String>();pNord.add(c);
+		c.addItem("Masculin");
+		c.addItem("Féminin");
+		
+		b1= new JButton("Modifier");pNord.add(b1);
+		
+		   b1.addActionListener(new ActionModifier() );
+
+          
+
+
+              
+
+		b2= new JButton("Supprimer");pNord.add(b2);
+		b2.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+
+
+                              if (e.getSource () == b2) {
+                            	  
+                            	int retour=  JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment supprimer ce joueur ? ", null, JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+                           
+                   }
+                            
+
+
+            }
+});
+
+		
+	    prec=new JButton("<");pNord.add(prec);
+	    prec.addActionListener(new ActionPrecedent());
+	    
+	    suiv=new JButton(">");pNord.add(suiv);
+	    suiv.addActionListener(new ActionSuivant());
+	  
+	   
+	    pNord.setLayout(new GridBagLayout());
+	    		 n=new GridBagConstraints();
+	    		 n.insets= new Insets(5,15,7,15);
+	    		 n.gridx=0;n.gridy=0;
+	    		 pNord.add(t1,n);
+	    		 n.gridx=1;n.gridy=0;
+	    		 pNord.add(t2,n);
+	    		 n.gridx=2;n.gridy=0;
+	    		 pNord.add(t3,n);
+	    		 n.gridx=3;n.gridy=0;
+	    		 pNord.add(t4,n);
+	    		 n.gridx=4;n.gridy=0;
+	    		 pNord.add(c,n);
+	    		 n.gridx=5;n.gridy=0;
+	    		 pNord.add(b1,n);
+	    		 n.gridx=6;n.gridy=0;
+	    		 pNord.add(b2,n);
+	    		 n.gridx=2;n.gridy=2;
+	    		 
+	    		 pNord.add(prec,n);
+	    		 n.gridx=4;n.gridy=2;
+	    		
+	    		 pNord.add(suiv,n);
+	    
+		
+		 
+		 inscrit=new JLabel("inscrivez vous avant de commencer à jouer");pCentre.add(inscrit);
+		
+		pseudo=new JLabel("Pseudo");pCentre.add(pseudo); 
+		 nom=new JLabel("Nom");pCentre.add(nom);
+	 
+		 daten=new JLabel("Date de Naissance ");pCentre.add(daten);
+		  
+		texte1= new JTextField("",15);pCentre.add(texte1);
+		
+		 
+		texte2= new JTextField("",15);pCentre.add(texte2);
+		
+		
+		
+		date= new JFormattedTextField (new SimpleDateFormat("dd-MM-yy")); 
+		date.setPreferredSize(new Dimension (120,20));
+		pCentre.add(date);
+	
+		
+		 
+		sexe=new JLabel("Sexe");pCentre.add(sexe);
+		 prenom=new JLabel("Prénom");pCentre.add(prenom);
+		 
+		c1=new JComboBox<String>();pCentre.add(c1);
+		c1.addItem("Masculin");
+		c1.addItem("Féminin");
+		c1.setPreferredSize(new Dimension (100,20));
+	
+		texte3= new JTextField("",15);pCentre.add(texte3);
+		texte3.setPreferredSize(new Dimension (120,20));
+		 
+		 getContentPane();
+		 pCentre.setLayout(new GridBagLayout());		
+		        g=new GridBagConstraints();
+		 		g.insets= new Insets(10,15,10,15);
+		 		 g.gridx=0;g.gridy=0;
+		 		 pCentre.add(inscrit,g);
+		 		 g.gridx=0;g.gridy=1;
+		 		 pCentre.add(pseudo,g);
+		 		 g.gridx=0;g.gridy=2;
+		 		 pCentre.add(nom,g);
+		 		 g.gridx=0;g.gridy=3;
+		 		 pCentre.add(daten,g);
+		 		 g.gridx=1;g.gridy=1;
+		 		 pCentre.add(texte1,g);
+		 		 g.gridx=1;g.gridy=2;
+		 		 pCentre.add(texte2,g);
+		 		 g.gridx=1;g.gridy=3;
+		 		 pCentre.add(date,g);
+		 		 g.gridx=2;g.gridy=1;
+		 		 pCentre.add(sexe,g);
+		 		 g.gridx=2;g.gridy=2;
+		 		 pCentre.add(prenom,g);
+		 		 g.gridx=3;g.gridy=1;
+		 		 pCentre.add(c1,g);
+		 		 g.gridx=3;g.gridy=2;
+		 		 pCentre.add(texte3,g);
+		 
+		
+		
+		
+		  getContentPane();
+		   
+		    pEst.setLayout(new GridBagLayout());
+		    		 e=new GridBagConstraints();
+		  
+		    e.gridy=0;
+		    b3= new JButton("Ajouter");
+		    
+		    
+		    pEst.add(b3,e);
+		    e.gridy=1;
+		    b3.addActionListener(new Ajouter());
+	
+		      
+		    
+		    b4= new JButton("Annuler");
+		    	pEst.add(b4,e);
+		    	b4.addActionListener(new ActionListener() {
+
+                    public void actionPerformed(ActionEvent event) {
+
+                    	texte1.setText("");
+                    	texte2.setText("");
+                    	texte3.setText(""); 
+                    	date.setText("");
+                                                  
+                    }
+                   
+
+    });
+
+		//onglet 2
+		
+		pNord2= new JPanel() ;
+		pNord2.setBackground(Color.blue);
+		pCentre2= new JPanel() ;
+		onglet2.add(pNord2,"North");
+		onglet2.add(pCentre2,"Center");
+		pNord2.setPreferredSize(new Dimension (1600,200));
+		   
+		 BorderLayout w = new BorderLayout();
+			  
+		  onglet2.setLayout(w);
+				
+			
+		    onglet2.add(pNord2,BorderLayout.NORTH);
+			image= new JLabel(new ImageIcon("C:\\Users\\asus\\Desktop\\eclipse\\photo4.png"));
+					pNord2.add(image);
+				
+		onglet2.setLayout(w);
+					
+		onglet2.add(pCentre2,BorderLayout.CENTER);
+		
+		
+		DefaultTableModel model = new DefaultTableModel();
+		model.addColumn("pseudo");
+		model.addColumn("nom");
+		model.addColumn("prenom");
+		model.addColumn("datenais");
+		model.addColumn("sexe");
+		model.addColumn("nbessai");
+		JTable table = new JTable(model);
+		try {
+			
+
+			String sq = "SELECT pseudo,nom,prenom,datnais,sexe, nbessai FROM joueur ORDER BY nbessai ASC";
+			java.sql.PreparedStatement st= con.prepareStatement(sq);
+			ResultSet rs = st.executeQuery(sq);
+			while (rs.next()) {
+				String pseudo = rs.getString("pseudo");
+				String nom = rs.getString("nom");
+				String prenom = rs.getString("prenom");
+				String datnais = rs.getString("datnais");
+				String sexe = rs.getString("sexe");
+				String nbessai = rs.getString("nbessai");
+				model.addRow(new Object[] { pseudo, nom, prenom, datnais, sexe, nbessai });
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		JScrollPane scrollpane = new JScrollPane(table);
+		pCentre2.add(scrollpane);
+
+		
+		
+		    
+		    //3eme onglet
+		    p= new JPanel() ; onglet3.add(p);
+		    BorderLayout d = new BorderLayout();
+			  
+			  onglet3.setLayout(d);
+					
+				
+			    onglet3.add(p,BorderLayout.CENTER);
+			    p.setBackground(Color.pink);
+			txt1= new JLabel("Jeu de Devinette");p.add(txt1);
+			txt2= new JLabel("Bienvenu");p.add(txt2);
+			txt3= new JLabel("entrez le nombre à deviner entre 0 et 30");p.add(txt3);
+			txt4= new JLabel("Nombre d'essais restants");p.add(txt4);
+			txt5= new JLabel("7");p.add(txt5);
+			txt6= new JTextField(8);p.add(txt6);
+		
+			txt7=new JLabel("attention !!");
+			txt7.setForeground(Color.red);
+			bu= new JButton ("Valider");p.add(bu);
+			
+			bu.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+				      do {
+				         nbrjoueur = Integer.parseInt(txt6.getText());
+				        
+				         nbessaijoueur--;
+				         txt5.setText(Integer.toString(nbessaijoueur));
+				         if(nbrjoueur < nbrordi)
+				        	
+				        	{txt7.setText("Trop petit !");}
+				        
+				            
+				         else if(nbrjoueur > nbrordi)
+				        	{txt7.setText("Trop grand !");}
+				        	
+				        txt6.setText("");
+				      } while((nbrjoueur != nbrordi) && (nbessaijoueur >0));
+				     int nbessai;
+				      nbessai= 7-nbessaijoueur;
+				      if ((nbessaijoueur == 0) && (nbrjoueur != nbrordi)) { JOptionPane.showMessageDialog(null, "Vous avez perdu, le nombre à dévouvrir est : "+nbrordi+" !");}
+				     else {JOptionPane.showMessageDialog(null, "Bravo ! vous avez gagnez au bout de" + nbessai + " essais"); }
+				     try {	// connexion = maConnection();
+				    	String sql="SELECT * FROM joueurs where pseudo ='"+texte1.getText()+"'";
+				    	   java.sql.PreparedStatement  st = con.prepareStatement(sql);
+							ResultSet rs = st.executeQuery(sql); 
+					        rs.next();
+					        rs.updateInt(7,nbessai);
+					        rs.updateRow();
+			 				 
+			 				 
+					    	}catch(SQLException ee) {}
+
+				      txt5.setText("7");txt6.setText("");
+				          
+				   }});
+
+				 
+			 
+				 
+			
+					
+					
+					
+	
+			
+			
+			  getContentPane();
+			   
+			    p.setLayout(new GridBagLayout());
+			    		 l=new GridBagConstraints();
+			    		 l.insets= new Insets(20,25,20,25);
+			  
+			    l.gridx=1;l.gridy=0;
+			    p.add(txt1,l);
+			    
+			    l.gridx=1;l.gridy=1;
+			    p.add(txt2,l);
+			    
+			    l.gridx=0;l.gridy=2;
+			    p.add(txt3,l);
+			    
+			    l.gridx=0;l.gridy=4;
+			    p.add(txt4,l);
+			    
+			    l.gridx=1;l.gridy=4;
+			    p.add(txt5,l);
+			    
+			    l.gridx=2;l.gridy=2;
+			    p.add(txt6,l);
+			    
+			    l.gridx=2;l.gridy=3;
+			    p.add(bu,l);
+			
+			    l.gridx=3;l.gridy=2;
+			    p.add(txt7,l);
+			
+		    
+			   
+			    try {
+			  		   statement = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+						resultat= statement.executeQuery(stm);
+						
+							if (resultat.next()) {
+								t1.setText(resultat.getString(1));
+								t2.setText(resultat.getString(2));
+								t3.setText(resultat.getString(3));
+								t4.setText(resultat.getString(4));
+								c.setSelectedItem(resultat.getString(5));
+								resultat.updateRow();
+								    
+							
+							
+							}}
+			   
+							
+			catch (SQLException e) {
+							
+				 System.err.println("Avoir une exception ! ");
+				 System.err.println(e.getMessage());
+			}
+			   
+
+
+		
+		setVisible(true);	
+		
+
+	  
+ 	}  
+	public class ActionCouleurs implements ActionListener {
+		public synchronized void actionPerformed(ActionEvent e) {
+			if (e.getSource()== bleu)
+			{pNord.setBackground(Color.blue);
+			p.setBackground(Color.blue);
+			pNord2.setBackground(Color.blue);
+		}
+		else if (e.getSource()== rose)
+			
+			{pNord.setBackground(Color.pink);
+			p.setBackground(Color.pink);
+			pNord2.setBackground(Color.pink);
+			}
+		else if (e.getSource()==mauve)
+			{pNord.setBackground(new Color(238,130,238));
+			p.setBackground(new Color(238,130,238));
+			pNord2.setBackground(new Color(238,130,238));
+			}
+			}
+			}
+
+	public class ActionPartie implements ActionListener {
+		public synchronized void actionPerformed(ActionEvent x) {
+			String j = "";
+
+			try {
+				j = JOptionPane.showInputDialog(null, "saisir le pseudo svp", "Super vous voulez jouer",JOptionPane.QUESTION_MESSAGE);
+			} catch (Exception e) {
+
+			}
+
+			while (j.equals("")) {
+				j = JOptionPane.showInputDialog(null, "vous n'avez rien saisie, saisir le pseudo svp", "Erreur",JOptionPane.WARNING_MESSAGE);
+			}
+			while(ctrl(j)==false) {
+				j= JOptionPane.showInputDialog(null, "pseudo introuvable, saisir le pseudo svp", "Erreur",JOptionPane.WARNING_MESSAGE);
+			}
+			if(ctrl(j)) {
+				String sl = "SELECT pseudo,nom,prenom,datnais,sexe FROM joueur WHERE pseudo= '" + j + "'";
+				try {
+					
+					java.sql.PreparedStatement   st = con.prepareStatement(sl);
+					ResultSet rs = st.executeQuery(sl);
+					while (rs.next()) {
+						String pseudo = rs.getString("pseudo");
+						String nom = rs.getString("nom");
+						String prenom = rs.getString("prenom");
+						String datnais = rs.getString("datnais");
+						String sexe = rs.getString("sexe");
+						t1.setText(pseudo.toString());
+						t2.setText(nom.toString());
+						t3.setText(prenom.toString());
+						t4.setText(datnais.toString());
+						c.setSelectedItem(sexe.toString());
+
+					}
+				} catch (SQLException e) {
+				
+					e.printStackTrace();
+				}
+				onglets.setEnabledAt(2, true);
+				  onglet1.removeAll();    /* masque le jpanel en cours */
+		          onglet1.repaint();       /* repeint */
+		          onglet1.revalidate();    /* revalide */
+		 
+		          onglet1.add(onglet3);  /*  tu affiches le jpanel que tu souhaite */
+		          onglet1.repaint();       
+		          onglet1.revalidate();
+				txt2.setText("Bienvenu  " +j);					
+				
+			}
+
+		}
+
+
+	}
+	 public static class MyConnection{
+				 
+		 	    public static java.sql.Connection getConnection() {
+     
+  	java.sql.Connection con = null;
+      try{
+      	Class.forName("com.mysql.jdbc.Driver");
+          con = DriverManager.getConnection("jdbc:mysql://localhost/db_jeu","root","");
+         
+        
+      }catch(Exception ex){
+          JOptionPane.showMessageDialog(null,ex.getMessage());
+      }
+	return con;
+	  
+		    }
+  	   }
+
+			
+	 class Ajouter implements ActionListener{
+		 
+		 public void actionPerformed(java.awt.event.ActionEvent evt) {
+			 
+			 String psd = texte1.getText();
+			 String nom = texte2.getText();
+			 
+			 String prenom = texte3.getText();
+			 String datenaissance = date.getText();
+			 
+			 String sexe = (String) c1.getSelectedItem(); 
+			 
+			 
+			 if (psd.equals("")||nom.equals("")||prenom.equals("")|| datenaissance.equals("")) {
+				 JOptionPane.showMessageDialog(null, "un ou plusieurs champs obligatoires sont vides");
+				 
+			 }
+			 else {
+				
+				 java.sql.PreparedStatement ps;
+				 String query = "INSERT INTO `joueur`(`pseudo`, `nom`, `prenom`, `datnais`, `sexe`, `nbessai`) VALUES (?,?,?,?,?,?)";
+				 try {
+					 ps = con.prepareStatement(query);
+					 ps.setString(1, psd);
+					 ps.setString(2, nom);
+					 ps.setString(3, prenom);
+			 		 ps.setString(4, datenaissance);
+					 ps.setString(5, sexe);
+					 ps.setString(6, "8");
+				
+					 if(ps.executeUpdate()>0)
+					 {JOptionPane.showMessageDialog(null, "joueur ajouté");}
+					 
+					 
+				 }catch(SQLException ex) {
+					 Logger.getLogger(MaFrame.class.getName()).log(Level.SEVERE, null, ex);
+				 }
+				 
+				 
+				 
+				 
+			 }
+			  }
+		 }
+	 
+ 
+	public class ActionRecherche implements ActionListener {
+		public synchronized void actionPerformed(ActionEvent k) {
+			int i=-1;
+			while(i<0)
+			{
+			 String y =JOptionPane.showInputDialog(null,"Saisissez Pseudo SVP:","Vous cherchez un pseudo",JOptionPane.INFORMATION_MESSAGE);
+			  if(( y==null || y.length()>0)) {i++;}
+			  
+			}
+			
+			 
+		}
+	}
+
+	public boolean ctrl (String pseudo) {
+	ResultSet rs;
+	boolean ctrl=false;
+	String sql="SELECT * FROM joueur WHERE pseudo =?";
+	try {
+		
+		java.sql.PreparedStatement st = con.prepareStatement(sql);
+		st.setString(1, t1.getText());
+		rs=st.executeQuery();
+		if(rs.next()) {
+			ctrl=true;
+			
+		}
+		
+		
+	}
+	catch(SQLException e) {
+		
+		Logger.getLogger(MaFrame.class.getName()).log(Level.SEVERE, null, e);
+		
+	}
+	return ctrl;
+	}
+	public class ActionModifier implements ActionListener {
+		public synchronized void actionPerformed(ActionEvent a) {	
+			if (t2.getText().equals("") || t3.getText().equals("")) {JOptionPane.showMessageDialog(null, "Un des champs est vide","échec",JOptionPane.INFORMATION_MESSAGE);}
+			else {
+			try
+			  {
+			    
+			    java.sql.PreparedStatement ps = con.prepareStatement(
+"UPDATE joueur SET nom = ? , prenom = ? , datnais = ?, sexe = ? WHERE pseudo = '"+ t1.getText() + "'");
+		    JOptionPane.showMessageDialog(null, "Etes-vous sur de modifier le joueur ? " , "",JOptionPane.INFORMATION_MESSAGE);
+
+				
+			    ps.setString(1,t2.getText());
+			    ps.setString(2,t3.getText());
+			    ps.setString(3,t4.getText());
+			    ps.setString(4, c.getSelectedItem().toString());
+			    
+			 
+			    ps.executeUpdate();
+			    JOptionPane.showMessageDialog(null, "Modification effectuée",
+			    		
+                      "Opération validée",JOptionPane.INFORMATION_MESSAGE);
+
+			    ps.close();
+				
+						   resultat.updateString(2, t2.getText());
+						   resultat.updateString(3, t3.getText());
+						   resultat.updateString(4, t4.getText());
+						   resultat.updateString(5, c.getSelectedItem().toString());
+						   System.out.println("Modification effectuée");
+						   resultat.updateRow();
+						
+			  }
+			  catch (SQLException e)
+			  {
+			   
+				  System.err.println("Avoir une exception ! ");
+					 System.err.println(e.getMessage());}}}}
+	
+	
+	public class ActionPrecedent implements ActionListener {
+		public synchronized void actionPerformed(ActionEvent a) {
+			try {
+					if(resultat.previous()) {
+					t1.setText(resultat.getString(1));
+					t2.setText(resultat.getString(2));
+					t3.setText(resultat.getString(3));
+					t4.setText(resultat.getString(4));
+					c.setSelectedItem(resultat.getString(5));
+					
+				 }
+				 else {JOptionPane.showMessageDialog(null,"Premier joueur");}
+  	  }
+				
+catch (SQLException e) {
+				
+	 System.err.println("Avoir une exception ! ");
+	 System.err.println(e.getMessage());
+			}}}
+	public class ActionSuivant implements ActionListener {
+		public synchronized void actionPerformed(ActionEvent n) {
+			try {
+	    		
+					 if(resultat.next()) {
+						t1.setText(resultat.getString(1));
+						t2.setText(resultat.getString(2));
+						t3.setText(resultat.getString(3));
+						t4.setText(resultat.getString(4));
+						c.setSelectedItem(resultat.getString(5));
+						
+					 }
+					 else {JOptionPane.showMessageDialog(null,"C'est le dernier joueur !!");}
+	    	  }
+					
+	catch (SQLException e) {
+					
+		 System.err.println("Avoir une exception! ");
+		 System.err.println(e.getMessage());
+				}}}
+
+
+	
+
+
+	
+	
+
+}
+
+
+
+
+
+	
+
