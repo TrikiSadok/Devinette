@@ -136,7 +136,7 @@ public class MaFrame extends JFrame{
 		mauve.addActionListener(new ActionCouleurs());
 		
 		
-		//Création des onglets
+		//CrÃ©ation des onglets
 	    onglets = new JTabbedPane();
 	    onglet1 = new JPanel();
 	    onglet2 = new JPanel();
@@ -148,7 +148,7 @@ public class MaFrame extends JFrame{
 
 
 	        //On ajoute l'onglet au menu d'onglets
-	        onglets.add("Joueurs et mise à jours",onglet1); 
+	        onglets.add("Joueurs et mise Ã  jours",onglet1); 
 	        onglets.add("Classement",onglet2);
 	        onglets.add("Jouer ",onglet3);
 		add(onglets);
@@ -193,7 +193,7 @@ public class MaFrame extends JFrame{
 		
 		c=new JComboBox<String>();pNord.add(c);
 		c.addItem("Masculin");
-		c.addItem("Féminin");
+		c.addItem("FÃ©minin");
 		
 		b1= new JButton("Modifier");pNord.add(b1);
 		
@@ -256,7 +256,7 @@ public class MaFrame extends JFrame{
 	    
 		
 		 
-		 inscrit=new JLabel("inscrivez vous avant de commencer à jouer");pCentre.add(inscrit);
+		 inscrit=new JLabel("inscrivez vous avant de commencer Ã  jouer");pCentre.add(inscrit);
 		
 		pseudo=new JLabel("Pseudo");pCentre.add(pseudo); 
 		 nom=new JLabel("Nom");pCentre.add(nom);
@@ -277,11 +277,11 @@ public class MaFrame extends JFrame{
 		
 		 
 		sexe=new JLabel("Sexe");pCentre.add(sexe);
-		 prenom=new JLabel("Prénom");pCentre.add(prenom);
+		 prenom=new JLabel("PrÃ©nom");pCentre.add(prenom);
 		 
 		c1=new JComboBox<String>();pCentre.add(c1);
 		c1.addItem("Masculin");
-		c1.addItem("Féminin");
+		c1.addItem("FÃ©minin");
 		c1.setPreferredSize(new Dimension (100,20));
 	
 		texte3= new JTextField("",15);pCentre.add(texte3);
@@ -418,7 +418,7 @@ public class MaFrame extends JFrame{
 			    p.setBackground(Color.pink);
 			txt1= new JLabel("Jeu de Devinette");p.add(txt1);
 			txt2= new JLabel("Bienvenu");p.add(txt2);
-			txt3= new JLabel("entrez le nombre à deviner entre 0 et 30");p.add(txt3);
+			txt3= new JLabel("entrez le nombre Ã  deviner entre 0 et 30");p.add(txt3);
 			txt4= new JLabel("Nombre d'essais restants");p.add(txt4);
 			txt5= new JLabel("7");p.add(txt5);
 			txt6= new JTextField(8);p.add(txt6);
@@ -447,7 +447,7 @@ public class MaFrame extends JFrame{
 				      } while((nbrjoueur != nbrordi) && (nbessaijoueur >0));
 				     int nbessai;
 				      nbessai= 7-nbessaijoueur;
-				      if ((nbessaijoueur == 0) && (nbrjoueur != nbrordi)) { JOptionPane.showMessageDialog(null, "Vous avez perdu, le nombre à dévouvrir est : "+nbrordi+" !");}
+				      if ((nbessaijoueur == 0) && (nbrjoueur != nbrordi)) { JOptionPane.showMessageDialog(null, "Vous avez perdu, le nombre Ã  dÃ©vouvrir est : "+nbrordi+" !");}
 				     else {JOptionPane.showMessageDialog(null, "Bravo ! vous avez gagnez au bout de" + nbessai + " essais"); }
 				     try {	// connexion = maConnection();
 				    	String sql="SELECT * FROM joueurs where pseudo ='"+texte1.getText()+"'";
@@ -663,7 +663,7 @@ public class MaFrame extends JFrame{
 					 ps.setString(6, "8");
 				
 					 if(ps.executeUpdate()>0)
-					 {JOptionPane.showMessageDialog(null, "joueur ajouté");}
+					 {JOptionPane.showMessageDialog(null, "joueur ajoutÃ©");}
 					 
 					 
 				 }catch(SQLException ex) {
@@ -717,7 +717,7 @@ public class MaFrame extends JFrame{
 	}
 	public class ActionModifier implements ActionListener {
 		public synchronized void actionPerformed(ActionEvent a) {	
-			if (t2.getText().equals("") || t3.getText().equals("")) {JOptionPane.showMessageDialog(null, "Un des champs est vide","échec",JOptionPane.INFORMATION_MESSAGE);}
+			if (t2.getText().equals("") || t3.getText().equals("")) {JOptionPane.showMessageDialog(null, "Un des champs est vide","Ã©chec",JOptionPane.INFORMATION_MESSAGE);}
 			else {
 			try
 			  {
@@ -734,9 +734,9 @@ public class MaFrame extends JFrame{
 			    
 			 
 			    ps.executeUpdate();
-			    JOptionPane.showMessageDialog(null, "Modification effectuée",
+			    JOptionPane.showMessageDialog(null, "Modification effectuÃ©e",
 			    		
-                      "Opération validée",JOptionPane.INFORMATION_MESSAGE);
+                      "OpÃ©ration validÃ©e",JOptionPane.INFORMATION_MESSAGE);
 
 			    ps.close();
 				
@@ -744,7 +744,7 @@ public class MaFrame extends JFrame{
 						   resultat.updateString(3, t3.getText());
 						   resultat.updateString(4, t4.getText());
 						   resultat.updateString(5, c.getSelectedItem().toString());
-						   System.out.println("Modification effectuée");
+						   System.out.println("Modification effectuÃ©e");
 						   resultat.updateRow();
 						
 			  }
